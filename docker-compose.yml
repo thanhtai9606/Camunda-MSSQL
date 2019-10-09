@@ -1,0 +1,34 @@
+version: '2'
+
+services:
+  mysql-db:
+    image: mysql:5
+    container_name: camunda_mysql
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: camunda_db   
+    
+  camunda:
+    image: camunda/camunda-bpm-platform
+    container_name: camunda_bpm
+    ports:
+      - '8051:8080'
+    environment:
+      DB_DRIVER: com.mysql.jdbc.Driver
+      DB_URL: 'jdbc:mysql://mysql-db:3306/camunda_db?autoReconnect=true'
+      DB_USERNAME: root
+      DB_PASSWORD: root
+
+  myadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: myadmin   
+    ports:
+      - '8081:80'
+    environment:
+      PMA_HOST: mysql-db
+      MYSQL_ROOT_PASSWORD: root   
+    depends_on:
+      - 'mysql-db'
